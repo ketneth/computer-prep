@@ -15,6 +15,6 @@ IF NOT EXIST C:\Temp\prep MKDIR C:\Temp\prep
 
 REM Copies the contents of the current disk to the destination folder.
 pushd %~dp0
-COPY .\* C:\Setup
+COPY .\* C:\Temp\prep
 
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\prep\scripts\001.PowerShell7.ps1"
