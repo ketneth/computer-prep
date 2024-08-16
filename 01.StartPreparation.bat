@@ -17,4 +17,8 @@ REM Copies the contents of the current disk to the destination folder.
 pushd %~dp0
 XCOPY .\* C:\Temp\prep /S /Y
 
+REM Creates a log file named after the serial number of the host computer.
+FOR /F "skip=1" %%G IN ('"wmic bios get serialnumber"') DO (ECHO %DATE%>%%G_log.txt)
+
+REM Runs the next script.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\prep\scripts\001.PowerShell7.ps1"
