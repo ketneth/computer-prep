@@ -1,0 +1,3 @@
+"Application","Command"
+"FortiClientVPN.exe","-passive"
+"Setup64.msi","/qn"
