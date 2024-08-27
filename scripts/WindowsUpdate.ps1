@@ -1,8 +1,28 @@
 #Requires -RunAsAdministrator
 
 param(
-    [Switch]$Auto
+    [Switch]$Auto,
+    [Parameter(Mandatory)][String]$LogFile
 )
+
+function Add-LogMessage{
+	param(
+		[Parameter(MandaTory, Position=0)][String]$LogFile,
+		[Parameter(Mandatory, ValueFromPipeline)][String]$Message
+	)
+	$Date = Get-Date -Format HH:MM:ss
+	"$Date`t$Message" | Out-File $LogFile -Append
+
+	<#
+        .SYNOPSIS
+        Add Message to LogFile.
+
+        .DESCRIPTION
+        Adds timestamp and Message to LogFile.
+    #>
+}
+
+"[WindowsUpdate Start]" | Add-LogMessage $LogFile
 
 function Set-Environment {
     try {
@@ -158,3 +178,5 @@ if($Auto){
     .INPUTS
     None. You can't pipe objects to WindowsUpdate.ps1.
 #>
+
+"[WindowsUpdate End]" | Add-LogMessage $LogFile
