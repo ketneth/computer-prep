@@ -7,13 +7,30 @@ param(
     [Parameter(Mandatory)][String]$LogFile
 )
 
+function Add-LogMessage{
+	param(
+		[Parameter(MandaTory, Position=0)][String]$LogFile,
+		[Parameter(Mandatory, ValueFromPipeline)][String]$Message
+	)
+	$Date = Get-Date -Format HH:MM:ss
+	"$Date`t$Message" | Out-File $LogFile -Append
+
+	<#
+        .SYNOPSIS
+        Add Message to LogFile.
+
+        .DESCRIPTION
+        Adds timestamp and Message to LogFile.
+    #>
+}
+
 $Applications = Get-ChildItem -Path C:\Temp\prep\apps -Include "*.exe","*.msi","*.msix" 
 $InstallInstructions = "C:\Temp\prep\apps\Setup.csv"
 
 if($ApplicationInstall){
     # Documents the application install start time.
     $Date = Get-Date -Format HH:MM:ss
-    "$Date`t[AppSetup Start]" | Out-File $LogFile -Append
+    "[AppSetup Start]" | Add-LogMessage $LogFile
     
     # Gets the log file contents.
     $Logs = Get-Content -Path $LogFile
@@ -31,13 +48,13 @@ if($ApplicationInstall){
             # Verifies if the found application has an installation command.
             $InstallCommand = ($Commands | Where-Object($_.application -eq $Application.Name)).Command
             if($InstallCommand){
-                "$Date`tInstalling (Automatic) $($Application.Name) $InstallCommand" | Out-File -FilePath $LogFile -Append
+                "Installing (Automatic) $($Application.Name) $InstallCommand" | Add-LogMessage $LogFile
                 Start-Process -FilePath $Application.FullName -ArgumentList $InstallCommand -Verb RunAs -Wait -OutVariable InstallResult
                 if($InstallResult){
-                    $InstallResult | ForEach-Object("`t$_" | Out-File -FilePath $LogFile -Append)
+                    $InstallResult | ForEach-Object("`t$_" | Add-LogMessage $LogFile)
                 }
             }else{
-                "$Date`tInstalling (Manual) $($Application.Name)"
+                "Installing (Manual) $($Application.Name)" | Add-LogMessage $LogFile
                 Start-Process -FilePath $Application.FullName -Verb RunAs -Wait
             }
         }
@@ -45,5 +62,5 @@ if($ApplicationInstall){
 
     # Documents the application install end time.
     $Date = Get-Date -Format HH:MM:ss
-    "$Date`t[AppSetup End]" | Out-File $LogFile -Append
+    "[AppSetup End]" | Add-LogMessage $LogFile
 }
