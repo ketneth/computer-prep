@@ -22,8 +22,9 @@ if($ApplicationInstall){
     $Commands = Import-Csv -Path $InstallInstructions
 
     foreach($Application in $Applications){
-        # Verifies if the application was already installed.
-        if($Logs -like "*Installing*$($Application.Name)*"){
+        # Verifies there has already been an attempt at installing the application
+        # or if the application is already installed.
+        if($Logs -like "*Installing*$($Application.Name)*" -or (Test-Path -Path $Application.InstallTest)){
             Continue
         }else{
             $Date = Get-Date -Format HH:MM:ss
