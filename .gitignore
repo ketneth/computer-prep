@@ -1,4 +1,4 @@
 *.exe
 *.msi
 *.msix
-*_logs.txt
+*_log.txt
