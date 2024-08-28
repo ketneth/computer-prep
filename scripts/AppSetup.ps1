@@ -29,7 +29,6 @@ $InstallInstructions = "C:\Temp\prep\apps\Setup.csv"
 
 if($ApplicationInstall){
     # Documents the application install start time.
-    $Date = Get-Date -Format HH:MM:ss
     "[AppSetup Start]" | Add-LogMessage $LogFile
     
     # Gets the log file contents.
@@ -44,7 +43,6 @@ if($ApplicationInstall){
         if($Logs -like "*Installing*$($Application.Name)*" -or (Test-Path -Path $Application.InstallTest)){
             Continue
         }else{
-            $Date = Get-Date -Format HH:MM:ss
             # Verifies if the found application has an installation command.
             $InstallCommand = ($Commands | Where-Object($_.application -eq $Application.Name)).Command
             if($InstallCommand){
@@ -61,6 +59,5 @@ if($ApplicationInstall){
     }
 
     # Documents the application install end time.
-    $Date = Get-Date -Format HH:MM:ss
     "[AppSetup End]" | Add-LogMessage $LogFile
 }
