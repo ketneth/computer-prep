@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Settings>
+    <WindowsUpdate>
+        <Run>"true"</Run>
+    </WindowsUpdate>
     <BloatwareRemoval>
-        <Run>true</Run>
+        <Run>"true"</Run>
     </BloatwareRemoval>
     <ComputerRename>
-        <Run>true</Run>
+        <Run>"true"</Run>
         <NewName></NewName>
     </ComputerRename>
-    <UserSettings RunForExistingUsers = true>
-        <DesktopCleanup>true</DesktopCleanup>
-        <PublicDesktopCleanup>true</PublicDesktopCleanup>
-        <RemoveTaskView>true</RemoveTaskView>
-        <RemoveWidgets>true</RemoveWidgets>
-        <RemoveChat>true</RemoveChat>
-        <RemoveSearch>true</RemoveSearch>
-        <MoveStartLeft>true</MoveStartLeft>
-        <StartMorePins>true</StartMorePins>
-        <StartMoreRecommendations>true</StartMoreRecommendations>
+    <UserSettings RunForExistingUsers = "true">
+        <DesktopCleanup>"true"</DesktopCleanup>
+        <PublicDesktopCleanup>"true"</PublicDesktopCleanup>
+        <RemoveTaskView>"true"</RemoveTaskView>
+        <RemoveWidgets>"true"</RemoveWidgets>
+        <RemoveChat>"true"</RemoveChat>
+        <RemoveSearch>"true"</RemoveSearch>
+        <MoveStartLeft>"true"</MoveStartLeft>
+        <StartMorePins>"true"</StartMorePins>
+        <StartMoreRecommendations>"true"</StartMoreRecommendations>
     </UserSettings>
 </Settings> 
