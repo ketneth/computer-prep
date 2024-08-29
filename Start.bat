@@ -29,4 +29,4 @@ REM Documents the original files' location.
 echo SourceLocation=%~dp0 >> C:\Temp\prep\%serial%_log.txt
 
 REM Runs the next script.
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\prep\scripts\001.PowerShell7.ps1"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\prep\scripts\Main.ps1"
