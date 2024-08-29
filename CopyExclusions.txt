@@ -1,2 +1,4 @@
 .gitignore
 logs\
+README.md
+CopyExclusions.txt
