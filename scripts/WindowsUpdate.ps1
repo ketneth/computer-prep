@@ -104,10 +104,6 @@ function Update-Computer {
                 }
             }else{
                 $Continue = $false
-                if($AutoReboot){
-                    $RegKey = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce\"
-                    New-ItemProperty -Path $RegKey -Name "!WindowsUpdate" -Value 'cmd /c del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Restart.bat"'
-                }
             }
             $InstalledUpdates += ($InstallResult | Where-Object{$_.Result -ne 'Failed'}).Title
             if($InstallResult.Result -contains 'Failed'){
@@ -144,19 +140,6 @@ function Update-Computer {
 }
 
 if($Auto){
-    $Path = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Restart.bat"
-    $LinkTest = Test-Path $Path
-    if(!$LinkTest){
-        $Command = "net session >nul 2>&1
-        if %errorLevel% == 0 (
-            goto Continue
-        ) else (
-            REM Restarts the script as admin.
-            powershell -command `"Start-Process %~dpnx0 -Verb runas`"
-        )
-        C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoExit -NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Auto"
-        Set-Content -Path $Path -Value $Command
-    }
     Update-Computer -AutoReboot
 }Else{
     Update-Computer
