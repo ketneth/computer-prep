@@ -103,44 +103,64 @@ if($Config.ComputerRename.Run -and -not $ComputerRenameCheck){
 $UserSettingsCheck = $LogFile | Where-Object{$_ -match "[UserSettings End]"}
 if($Config.UserSettings | Where-Object{$_} -and -not $UserSettingsCheck){
     "[UserSettings Start]" | Add-LogMessage $LogPath
-    # Loads the registry profile.
-    REG LOAD HKLM\Default C:\Users\Default\NTUSER.DAT
+    # Recovers the registry changes.
+    $Registries = $Config.UserSettings.Registry
+    # Prepares the environment.
+    if($Registries.Path | Where-Object{$_ -match "HKU:\"}){
+        New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS
+    }
+    if($Registries.Path | Where-Object{$_ -match "HKLM:\Default"}){
+        REG LOAD HKLM\Default C:\Users\Default\NTUSER.DAT
+    }
+    if($Config.UserSettings.RunForExistingUsers){
+        $UserRegistries = foreach($Registry in $Registries){
+            if($Registry.Path -match "HKLM:\\Default"){
+                $Registry.Path = $Registry.Path.Replace("HKLM:\Default","HKCU:")
+                $Registry
+            }else{
+                continue
+            }
+        }
+        $Registries += $UserRegistries
+    }
+    foreach($Registry in $Registries){
+        if(-not $Registry.Enabled){
+            continue
+        }
+        $params = @{Path = $Registry.Path}
+        # Verifies if the Path exists.
+        if(Test-Path @params){
+            $params["Name"] = $Registry.Name
+            # Verifies if the property exists.
+            if(Get-ItemProperty @params){
+                $params["Value"] = $Registry.Value
+                Set-ItemProperty @params
+                "$($Registry.DisplayName): Registry value changed" | Add-LogMessage $LogPath
+                "$($Registry.Path) - $($Registry.Name) - $($Registry.Value)" | Add-LogMessage $LogPath
+            }else{
+                $params["Value"] = $Registry.Value
+                $params["PropertyType"] = $Registry.PropertyType
+                New-ItemProperty @params -Force
+                "$($Registry.DisplayName): Registry value created" | Add-LogMessage $LogPath
+                "$($Registry.Path) - $($Registry.Name) - $($Registry.Value)" | Add-LogMessage $LogPath
+            }
+        }else{
+            New-Item @params -Force
+            "$($Registry.DisplayName): Registry path created" | Add-LogMessage $LogPath
+            $params["Value"] = $Registry.Value
+            $params["PropertyType"] = $Registry.PropertyType
+            New-ItemProperty @params -Force
+            "$($Registry.DisplayName): Registry value created" | Add-LogMessage $LogPath
+            "$($Registry.Path) - $($Registry.Name) - $($Registry.Value)" | Add-LogMessage $LogPath
+        }
+    }
     if($Config.UserSettings.DesktopCleanup){
-        Remove-Item -Path $Env:USERPROFILE\Desktop\ -Filter "*.lnk"
-        "User Desktop Cleaned" | Add-LogMessage $LogPath
+        Remove-Item -Path $Env:USERPROFILE\Desktop -Filter "*.lnk" -Force
+        "Cleaned user desktop" | Add-LogMessage $LogPath
     }
     if($Config.UserSettings.PublicDesktopCleanup){
-        Remove-Item -Path $Env:PUBLIC\Desktop\ -Filter "*.lnk"
-        "Public Desktop Cleaned" | Add-LogMessage $LogPath
-    }
-    if($Config.UserSettings.RemoveTaskView){
-        New-ItemProperty -Path "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "ShowTaskViewButton" -Value "0" -PropertyType Dword -Force
-        "Taskview Removed" | Add-LogMessage $LogPath
-    }
-    if($Config.UserSettings.RemoveWidgets){
-        New-ItemProperty "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarDa" -Value "0" -PropertyType Dword -Force
-        "Widgets Removed" | Add-LogMessage $LogPath
-    }
-    if($Config.UserSettings.RemoveChat){
-        New-ItemProperty "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarMn" -Value "0" -PropertyType Dword -Force
-        "Chat Icon Removed" | Add-LogMessage $LogPath
-    }
-    if($Config.UserSettings.MoveStartLeft){
-        New-ItemProperty "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "TaskbarAl" -Value "0" -PropertyType Dword -Force
-        "Taskbar Moved to the Left" | Add-LogMessage $LogPath
-    }
-    if($Config.UserSettings.RemoveSearch){
-        $Path = "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Search"
-        if(-not (Test-Path -Path $Path)){
-            New-Item -Path $Path -Force
-            "Registry key missing. Created: $Path"
-        }
-        New-ItemProperty -Path $Path -Value "0" -PropertyType Dword -Force
-        "Search Icon Removed" | Add-LogMessage $LogPath
-    }
-    if($Config.UserSettings.StartMorePins){
-        New-ItemProperty "HKLM:\Default\Software\Microsoft\Windows\CurrentVersion\Explorer\Advanced" -Name "Start_Layout" -Value "1" -PropertyType Dword -Force
-        "More Pinning space added to Start menu" | Add-LogMessage $LogPath
+        Remove-Item -Path $env:PUBLIC\Desktop -Filter "*.lnk" -Force
+        "Cleaned Public desktop" | Add-LogMessage $LogPath
     }
     "[UserSettings End]" | Add-LogMessage $LogPath
 }
@@ -148,10 +168,60 @@ if($Config.UserSettings | Where-Object{$_} -and -not $UserSettingsCheck){
 <# LocalAdminPassword #>
 $LocalAdminPasswordCheck = $LogFile | Where-Object{$_ -match "[LocalAdminPassword End]"}
 if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
+    # Generates the new password.
     "[LocalAdminPassword Start]" | Add-LogMessage $LogPath
-    $OriginCheck = $LogFile | Where-Object{$_ -match "SourceLocation="}
-    if($OriginCheck){
-
+    $Check = $false
+    $NewPassword = while(-not $Check){
+        $Characters = 'abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ0123456789'
+        $Symbols = '!@#$%&*?'
+        $Template = -join (1..10 | ForEach-Object {Get-Random -InputObject $characters.ToCharArray()})
+        $Template += -join (1..2 | ForEach-Object {Get-Random -InputObject $Symbols.ToCharArray()})
+        if($Template -cmatch "[A-Z]" -and $Template -cmatch "[a-z]" -and $Template -match "\d"){
+            foreach($Symbol in $Symbols.ToCharArray()){
+                if($Template -match "\$Symbol"){
+                    Write-Host $Symbol
+                    $Template
+                    $Check = $true
+                    break
+                }
+            }
+        }else{
+            Write-Host $Template
+        }
+    }
+    # Prepares the ItGlue password import file.
+    $Username = WHOAMI
+    $Password = @{
+        organization = ""
+        name = $Username.Replace("\"," - ")
+        password_category = "Local Admin"
+        username = $Username
+        password = $NewPassword
+        url = ""
+        notes = ""
+    }
+    $Destination = "$env:USERPROFILE\Desktop\Password_$env:COMPUTERNAME.csv"
+    $Password | Export-Csv -NoTypeInformation -NoClobber -Delimiter ',' -Path $Destination
+    # Verifies if the source disk is avilable.
+    $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
+    if(Test-Path -Path $Origin){
+        # Copies the password folder to the source disk.
+        Copy-Item -Path $Destination -Destination $Origin
+        "Password file copied to source directory" | Add-LogMessage $LogPath
+        & "NET USER $Password"
+        "Password changed" | Add-LogMessage $LogPath
+    }else{
+        # Source disk cannot be found. Stores the password change on
+        # script op de current user's desktop.
+        $Script = "
+        @echo off
+        echo This script will change the curen't user's password.
+        echo Make sure to recover the file prior to running this command.
+        pause
+        NET USER $Password
+        " | Out-File "$Env:USERPROFILE\Desktop\PswdChange.bat"
+        "Source disk could not be reached. Aborting password change." | Add-LogMessage $LogPath
+        "Password change script stored on desktop." | Add-LogMessage $LogPath
     }
     "[LocalAdminPassword End]" | Add-LogMessage $LogPath
 }
