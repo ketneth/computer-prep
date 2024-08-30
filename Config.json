@@ -1,0 +1,21 @@
+{
+	"WindowsUpdate":true,
+	"BloatwareRemoval":true,
+	"ComputerRename": {
+		"Run":true,
+		"NewName": ""
+	},
+	"UserSettings": {
+		"DesktopCleanup":true,
+		"PublicDesktopCleanup":true,
+		"RemoveTaskView":true,
+		"RemoveWidgets":true,
+		"RemoveChat":true,
+		"RemoveSearch":true,
+		"MoveStartLeft":true,
+		"StartMorePins":true,
+		"RunForExistingUsers":true
+	},
+	"LocalAdminPassword":true,
+	"Cleanup":true
+}
