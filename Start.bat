@@ -11,6 +11,9 @@ if %errorLevel% == 0 (
 )
 
 :Continue
+REM Disables UAC for future runs.
+REG ADD HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System /v EnableLUA /t REG_DWORD /d 0 /f
+
 REM Checks if the "C:\Temp\prep" folder exists.
 IF NOT EXIST C:\Temp\prep MKDIR C:\Temp\prep
 
