@@ -7,6 +7,7 @@ if %errorLevel% == 0 (
 ) else (
     REM Restarts the script as admin.
     powershell -command "Start-Process %~dpnx0 -Verb runas"
+    goto End
 )
 
 :Continue
@@ -15,7 +16,7 @@ IF NOT EXIST C:\Temp\prep MKDIR C:\Temp\prep
 
 REM Copies the contents of the current disk to the destination folder.
 pushd %~dp0
-XCOPY .\* C:\Temp\prep /S /Y
+XCOPY .\* C:\Temp\prep /S /Y /EXCLUDE:CopyExclusions.txt
 
 REM Creates a log file named after the serial number of the host computer.
 set command=wmic bios get serialnumber /format:value
@@ -30,3 +31,5 @@ echo SourceLocation=%~dp0 >> C:\Temp\prep\%serial%_log.txt
 
 REM Runs the next script.
 powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Temp\prep\scripts\Main.ps1"
+
+:End
