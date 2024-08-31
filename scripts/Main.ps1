@@ -1,4 +1,4 @@
-# Requires -RunAsAdministrator
+#Requires -RunAsAdministrator
 
 function Add-LogMessage{
 	param(
@@ -227,6 +227,54 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
 }
 
 <# Cleanup #>
-if($Config.Cleanup -and (Test-Parth -Path "C:\Temp\prep\")){
-    
+$CleanupCheck = $LogFile | Where-Object{$_ -match "[Cleanup End]"}
+if($Config.Cleanup){
+    "[Cleanup Start]" | Add-LogMessage $LogPath
+    # Verifies if the source disk can be contacted.
+    $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
+    $OriginCheck = Test-Path $Origin
+    if(-not $OriginCheck){
+        while(-not $OriginCheck){
+            # Stops the script untill the disc is reachable.
+            Read-Host "Please connect the source disk before continuing: $Origin"
+            $OriginCheck = Test-Path $Origin
+        }
+    }
+    # Copies the logs to the source disk's log folder.
+    $LogFolder = "$Origin`Logs"
+    if(-not (Test-Path -Path $LogFolder)){
+        New-Item -Path $LogFolder -ItemType Directory
+        "Log Folder not found on source disk. New log folder created." | Add-LogMessage $LogPath
+    }
+    Copy-Item -Path $LogPath -Destination $LogFolder
+    "Log files copied to the source disk: $(Split-Path -Path $LogPath -Leaf)" | Add-LogMessage $LogPath
+    # Copies the password CSV document to the desktop
+    # in case some are still present in the prep folder.
+    $PasswordCheck = Get-ChildItem -Path $ParentFolder -Filter "Password*.csv" -Recurse
+    if($PasswordCheck){
+        $PasswordCheck | Copy-Item -Destination $Env:USERPROFILE\Desktop
+    }
+    # Prepares the task of removing the prep folder.
+    $params = @{
+        Path = "HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce"
+        Name = "!CleanupFolder"
+        PropertyType = "String"
+        Value = "CMD /C RD /S /Q C:\Temp\prep"
+        Force = $true
+    }
+    New-ItemProperty @params
+    "RunOnce task created." | Add-LogMessage $LogPath
+    # Removes the startup script.
+    Remove-Item -Path "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Restart.bat"
+    "Restart script removed." | Add-LogMessage $LogPath
+    # Re-enables UAC.
+    $params = @{
+        Path = "HKLM:\\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System"
+        Name = "EnableLUA"
+        Value = 1
+        Force = $true
+    }
+    Set-ItemProperty @params
+    "UAC re-enabled" | Add-LogMessage $LogPath
+    "[Cleanup End]" | Add-LogMessage $LogPath
 }
