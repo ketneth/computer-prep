@@ -2,3 +2,4 @@
 logs\
 README.md
 CopyExclusions.txt
+Start.bat
