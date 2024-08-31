@@ -228,7 +228,7 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
 
 <# Cleanup #>
 $CleanupCheck = $LogFile | Where-Object{$_ -match "[Cleanup End]"}
-if($Config.Cleanup){
+if($Config.Cleanup -and -not $CleanupCheck){
     "[Cleanup Start]" | Add-LogMessage $LogPath
     # Verifies if the source disk can be contacted.
     $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
