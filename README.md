@@ -21,7 +21,7 @@ Scripts used for configuring the computer.
 > :warning: Will abort if not run on a HP computer.
 > [Script](/scripts/BloatWareRemover.ps1)
 
-Removes all applications corresponding to the manufacturer, while not corresponding to the exceptions.
+Removes all applications corresponding to the manufacturer. (Exceptions are configured to prevent drivers removal.)
 
 ### WindowsUpdate.ps1
 
