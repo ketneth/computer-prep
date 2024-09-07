@@ -3,6 +3,8 @@
 > :information_source: Script has yet to be tested when ran from a network location.
 > Currently, the expected behaviour is to run it from a USB stick.
 
+## Setup
+
 0. Clone or copy the contents of this repository onto a network share or USB drive.
 1. Go over the contents of the [config](/Config.json) file and disable unwanted features.
     - All changes are enabled by default.
