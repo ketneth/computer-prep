@@ -64,7 +64,7 @@
 				"PropertyType":"Dword"
 			},
 			{
-				"DisplayName":"NumlockkAtBoot",
+				"DisplayName":"NumlockAtBoot",
 				"Description":"Enables Numlock at the start of the computer.",
 				"Enabled":true,
 				"Path":"HKU:\\.DEFAULT\\Control Panel\\Keyboard",
