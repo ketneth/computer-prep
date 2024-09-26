@@ -223,13 +223,14 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
     }else{
         # Source disk cannot be found. Stores the password change on
         # script op de current user's desktop.
+        $ScriptPath = "$Env:USERPROFILE\Desktop\PswdChange.bat"
         $Script = "
         @echo off
         echo This script will change the curen't user's password.
         echo Make sure to recover the file prior to running this command.
         pause
         NET USER $Password
-        " | Out-File "$Env:USERPROFILE\Desktop\PswdChange.bat"
+        " | Out-File -FilePath $ScriptPath
         "Source disk could not be reached. Aborting password change." | Add-LogMessage $LogPath
         "Password change script stored on desktop." | Add-LogMessage $LogPath
     }
