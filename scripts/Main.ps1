@@ -208,7 +208,10 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
         notes = ""
     }
     $Destination = "$env:USERPROFILE\Desktop\Password_$env:COMPUTERNAME.csv"
-    $Password | Export-Csv -NoTypeInformation -NoClobber -Delimiter ',' -Path $Destination
+    [PSCustomObject]$Password | Export-Csv -NoTypeInformation -NoClobber -Delimiter ',' -Path $Destination
+    # Remove quotes from the CSV file.
+    $Temp = Get-Content -Path $Destination
+    $Temp | ForEach-Object{$_.Replace('","',',').TrimStart('"').TrimEnd('"')} | Out-File -FilePath $Destination
     # Verifies if the source disk is avilable.
     $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
     if(Test-Path -Path $Origin){
