@@ -131,7 +131,10 @@ if($Config.UserSettings | Where-Object{$_} -and -not $UserSettingsCheck){
         if(-not $Registry.Enabled){
             continue
         }
-        $params = @{Path = $Registry.Path}
+        $params = @{
+            Path = $Registry.Path
+            ErrorAction = 'SilentlyContinue'
+        }
         # Verifies if the Path exists.
         if(Test-Path @params){
             $params["Name"] = $Registry.Name
