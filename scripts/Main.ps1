@@ -6,7 +6,7 @@ function Add-LogMessage{
 		[Parameter(Mandatory, ValueFromPipeline)][String]$Message
 	)
 	$Date = Get-Date -Format HH:MM:ss
-	"$Date`t$Message" | Out-File $LogFile -Append
+	"$Date`t$Message" | Out-File $LogFile -Append -Encoding ascii
 
 	<#
         .SYNOPSIS
@@ -58,41 +58,44 @@ if(!(Test-Path $Location)){
 $LogFile = Get-Content -Path $LogPath
 
 <# Windows Updates #>
-$WindowsUpdateEnd = $LogFile | Where-Object{$_ -match "[WindowsUpdate End]"}
+$WindowsUpdateEnd = $LogFile | Where-Object{$_ -match "\[WindowsUpdate End\]"}
 if($Config.WindowsUpdate -match "true" -and -not $WindowsUpdateEnd){
     & $PSScriptRoot\WindowsUPdate.ps1 -LogFile $LogPath -Auto
 }
 
 <# Bloatware Removal #>
-$BloatwareRemovalEnd = $LogFile | Where-Object{$_ -match "[BloatwareRemover End]"}
+$BloatwareRemovalEnd = $LogFile | Where-Object{$_ -match "\[BloatwareRemover End\]"}
 if($Config.BloatwareRemoval -and -not $BloatwareRemovalEnd){
     & $PSScriptRoot\BloatwareRemoval.ps1 -LogFile $LogPath
 }
 
 <# Computer Rename #>
-$ComputerRenameCheck = $LogFile | Where-Object{$_ -match "[Rename Skipped]|[Computer Renamed]"}
+$ComputerRenameCheck = $LogFile | Where-Object{$_ -match "\[Rename Skipped\]|\[Computer Renamed\]"}
 if($Config.ComputerRename.Run -and -not $ComputerRenameCheck){
-    $ComputerName = HOSTNAME
+    $ComputerName = $env:COMPUTERNAME
     $NewName = $Config.ComputerRename.NewName
-    if(-not $ComputerName -eq $NewName){
-        if($NewName){
+    if($NewName){
+        if(-not $ComputerName -eq $NewName){
             "[Computer Renamed]" | Add-LogMessage $LogPath
-            "Computer New Name: $NewName"
+            "Computer New Name: $NewName" | Add-LogMessage $LogPath
             Rename-Computer -NewName $Config.ComputerRename.NewName -Restart
-        }else{
-            $Check = $true
-            while($Check){
-                switch($NewName = Read-Host -Prompt "Please enter the new computer name. (Leave blank to skip)"){
-                    {$_ -eq $ComputerName} {
-                        Write-Host "This is already the given name of the device. Continuing with the script."
-                        "[Rename Skipped] New name same as current one." | Add-LogMessage $LogPath
-                        $Check = $false
-                    }
-                    {$null -ne $_} {
-                        "[Computer Renamed] New name: $NewName" | Add-LogMessage $LogPath
-                        Rename-Computer -NewName $NewName -Restart
-                    }
-                    default {$Check = $false}
+        }
+    }else{
+        $Check = $true
+        while($Check){
+            switch(Read-Host -Prompt "Please enter the new computer name. (Leave blank to skip)"){
+                {$_ -eq $ComputerName} {
+                    Write-Host "This is already the given name of the device. Continuing with the script."
+                    $Check = $false
+                }
+                {$_ -ne ''} {
+                    Write-Host "Computer renamed: $_"
+                    $Check = $false
+                    Rename-Computer -NewName $_ -Restart
+                }
+                default {
+                    Write-Host 'No name given.'
+                    $Check = $false
                 }
             }
         }
@@ -100,7 +103,7 @@ if($Config.ComputerRename.Run -and -not $ComputerRenameCheck){
 }
 
 <# UserSettings #>
-$UserSettingsCheck = $LogFile | Where-Object{$_ -match "[UserSettings End]"}
+$UserSettingsCheck = $LogFile | Where-Object{$_ -match "\[UserSettings End\]"}
 if($Config.UserSettings | Where-Object{$_} -and -not $UserSettingsCheck){
     "[UserSettings Start]" | Add-LogMessage $LogPath
     # Recovers the registry changes.
@@ -166,7 +169,7 @@ if($Config.UserSettings | Where-Object{$_} -and -not $UserSettingsCheck){
 }
 
 <# LocalAdminPassword #>
-$LocalAdminPasswordCheck = $LogFile | Where-Object{$_ -match "[LocalAdminPassword End]"}
+$LocalAdminPasswordCheck = $LogFile | Where-Object{$_ -match "\[LocalAdminPassword End\]"}
 if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
     # Generates the new password.
     "[LocalAdminPassword Start]" | Add-LogMessage $LogPath
@@ -227,7 +230,7 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
 }
 
 <# Cleanup #>
-$CleanupCheck = $LogFile | Where-Object{$_ -match "[Cleanup End]"}
+$CleanupCheck = $LogFile | Where-Object{$_ -match "\[Cleanup End\]"}
 if($Config.Cleanup -and -not $CleanupCheck){
     "[Cleanup Start]" | Add-LogMessage $LogPath
     # Verifies if the source disk can be contacted.
