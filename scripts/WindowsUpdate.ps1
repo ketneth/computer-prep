@@ -11,7 +11,7 @@ function Add-LogMessage{
 		[Parameter(Mandatory, ValueFromPipeline)][String]$Message
 	)
 	$Date = Get-Date -Format HH:MM:ss
-	"$Date`t$Message" | Out-File $LogFile -Append
+	"$Date`t$Message" | Out-File $LogFile -Append -Encoding ascii
 
 	<#
         .SYNOPSIS
