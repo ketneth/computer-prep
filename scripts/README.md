@@ -23,7 +23,7 @@ Removes all applications corresponding to the manufacturer. (Exceptions are conf
 
 Core script.
 Reads the contents of the [Config.json](/Config.json)-file.
-Depending on its settings, will run the [WindowsUpdate](#windowsupdate)-, [BloatwareRemover](#bloatwareremoverps1) and [AppSetup](#appsetupps1)-script.
+Depending on its settings, will run the [WindowsUpdate](#windowsupdateps1)-, [BloatwareRemover](#bloatwareremoverps1) and [AppSetup](#appsetupps1)-script.
 
 This script will also be responsible for:
 
