@@ -69,6 +69,15 @@
 				"Name":"InitialKeyboardIndicators",
 				"Value":2147483650,
 				"PropertyType":"REG_SZ"
+			},
+			{
+				"DisplayName":"Edge First Setup",
+				"Description":"Disables the first setup experience when opening Edge.",
+				"Enabled":true,
+				"Path":"HKLM:\\SOFTWARE\\Microsoft\\Edge",
+				"Name":"HideFirstRunExperience",
+				"Value":1,
+				"PropertyType":"Dword"
 			}
 		],
 		"RunForExistingUsers":true
