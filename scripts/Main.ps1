@@ -116,10 +116,10 @@ if($Config.UserSettings -and -not $UserSettingsCheck){
     # Recovers the registry changes.
     $Registries = $Config.UserSettings.Registry
     # Prepares the environment.
-    if($Registries.Path | Where-Object{$_ -match "HKU:\"}){
+    if($Registries.Path | Where-Object{$_ -match "HKU:\\"}){
         New-PSDrive -PSProvider Registry -Name HKU -Root HKEY_USERS
     }
-    if($Registries.Path | Where-Object{$_ -match "HKLM:\Default"}){
+    if($Registries.Path | Where-Object{$_ -match "HKLM:\\Default"}){
         REG LOAD HKLM\Default C:\Users\Default\NTUSER.DAT
     }
     if($Config.UserSettings.RunForExistingUsers){
