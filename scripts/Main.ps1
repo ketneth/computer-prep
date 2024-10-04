@@ -206,8 +206,8 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
         url = ""
         notes = ""
     }
-    $Destination = "$env:USERPROFILE\Desktop\Password_$env:COMPUTERNAME.csv"
-    [PSCustomObject]$Password | Export-Csv -NoTypeInformation -NoClobber -Delimiter ',' -Path $Destination
+    $PswFile = "$env:USERPROFILE\Desktop\Password_$env:COMPUTERNAME.csv"
+    [PSCustomObject]$Password | Export-Csv -NoTypeInformation -NoClobber -Delimiter ',' -Path $PswFile
     # Remove quotes from the CSV file.
     $Temp = Get-Content -Path $PswFile
     $Temp | ForEach-Object{$_.Replace('","',',').TrimStart('"').TrimEnd('"')} | Out-File -FilePath $PswFile
