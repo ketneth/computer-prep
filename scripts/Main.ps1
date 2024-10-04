@@ -111,7 +111,7 @@ if($Config.ComputerRename.Run -and -not $ComputerRenameCheck){
 
 <# UserSettings #>
 $UserSettingsCheck = $LogFile | Where-Object{$_ -match "\[UserSettings End\]"}
-if($Config.UserSettings | Where-Object{$_} -and -not $UserSettingsCheck){
+if($Config.UserSettings -and -not $UserSettingsCheck){
     "[UserSettings Start]" | Add-LogMessage $LogPath
     # Recovers the registry changes.
     $Registries = $Config.UserSettings.Registry
