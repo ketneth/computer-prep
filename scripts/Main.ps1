@@ -67,7 +67,7 @@ if($Config.WindowsUpdate -match "true" -and -not $WindowsUpdateEnd){
 <# Bloatware Removal #>
 $BloatwareRemovalEnd = $LogFile | Where-Object{$_ -match "\[BloatwareRemover End\]"}
 if($Config.BloatwareRemoval -and -not $BloatwareRemovalEnd){
-    & $PSScriptRoot\BloatwareRemoval.ps1 -LogFile $LogPath
+    & $PSScriptRoot\BloatwareRemover.ps1 -LogFile $LogPath
 }
 
 <# Computer Rename #>
