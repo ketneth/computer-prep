@@ -209,13 +209,13 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
     $Destination = "$env:USERPROFILE\Desktop\Password_$env:COMPUTERNAME.csv"
     [PSCustomObject]$Password | Export-Csv -NoTypeInformation -NoClobber -Delimiter ',' -Path $Destination
     # Remove quotes from the CSV file.
-    $Temp = Get-Content -Path $Destination
-    $Temp | ForEach-Object{$_.Replace('","',',').TrimStart('"').TrimEnd('"')} | Out-File -FilePath $Destination
+    $Temp = Get-Content -Path $PswFile
+    $Temp | ForEach-Object{$_.Replace('","',',').TrimStart('"').TrimEnd('"')} | Out-File -FilePath $PswFile
     # Verifies if the source disk is avilable.
     $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
     if(Test-Path -Path $Origin){
         # Copies the password folder to the source disk.
-        Copy-Item -Path $Destination -Destination $Origin
+        Copy-Item -Path $PswFile -Destination $Origin
         "Password file copied to source directory" | Add-LogMessage $LogPath
         & "NET USER $Password"
         "Password changed" | Add-LogMessage $LogPath
