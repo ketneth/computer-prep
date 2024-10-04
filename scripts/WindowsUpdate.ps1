@@ -28,10 +28,10 @@ function Add-LogMessage{
 function Set-Environment {
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        if(!(Get-PackageProvider -Name NuGet)){
+        if(!(Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction SilentlyContinue)){
             Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
         }
-        if(!(Get-Module -Name PSWindowsUpdate -ListAvailable)){
+        if(!(Get-Module -Name PSWindowsUpdate -ListAvailable -ErrorAction SilentlyContinue)){
             Install-Module -Name PSWindowsUpdate -Force -ErrorAction Stop
         }
         if((Get-ExecutionPolicy) -eq 'Restricted'){
