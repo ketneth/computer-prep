@@ -24,12 +24,12 @@ $Config = Get-Content -Path $ParentFolder\Config.json -Raw | ConvertFrom-Json
 
 # Defines log file name.
 $Serial = (wmic bios get serialnumber | Where-Object{$_})[1].Trim()
-$LogPath = "$PSScriptRoot\$Serial`_log.txt"
+$LogPath = "$ParentFolder\$Serial`_log.txt"
 
 # Verifies if a corresponding file exists.
 if(-not (Test-Path -Path $LogPath -PathType Leaf)){
     $Serial = $Serial.Replace(" ","_")
-    $LogPath = "$PSScriptRoot\$Serial`_log.txt"
+    $LogPath = "$ParentFolder\$Serial`_log.txt"
     # Verifies again, replacing spaces by underscores.
     if(-not (Test-Path -Path $LogPath -PathType Leaf)){
         # Creates the file if it cannot be found.
