@@ -6,8 +6,6 @@
 		"NewName": ""
 	},
 	"UserSettings": {
-		"DesktopCleanup":true,
-		"PublicDesktopCleanup":true,
 		"Registry":[
 			{
 				"DisplayName":"RemoveTaskView",
@@ -76,5 +74,8 @@
 		"RunForExistingUsers":true
 	},
 	"LocalAdminPassword":true,
-	"Cleanup":true
+	"Cleanup":{
+		"DesktopCleanup":true,
+		"PublicDesktopCleanup":true
+	}
 }

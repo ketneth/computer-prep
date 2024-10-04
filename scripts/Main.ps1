@@ -161,14 +161,6 @@ if($Config.UserSettings | Where-Object{$_} -and -not $UserSettingsCheck){
             "$($Registry.Path) - $($Registry.Name) - $($Registry.Value)" | Add-LogMessage $LogPath
         }
     }
-    if($Config.UserSettings.DesktopCleanup){
-        Remove-Item -Path $Env:USERPROFILE\Desktop -Filter "*.lnk" -Force
-        "Cleaned user desktop" | Add-LogMessage $LogPath
-    }
-    if($Config.UserSettings.PublicDesktopCleanup){
-        Remove-Item -Path $env:PUBLIC\Desktop -Filter "*.lnk" -Force
-        "Cleaned Public desktop" | Add-LogMessage $LogPath
-    }
     "[UserSettings End]" | Add-LogMessage $LogPath
 }
 
@@ -241,6 +233,14 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
 $CleanupCheck = $LogFile | Where-Object{$_ -match "\[Cleanup End\]"}
 if($Config.Cleanup -and -not $CleanupCheck){
     "[Cleanup Start]" | Add-LogMessage $LogPath
+    if($Config.Cleanup.DesktopCleanup){
+        Remove-Item -Path $Env:USERPROFILE\Desktop -Filter "*.lnk" -Force
+        "Cleaned user desktop" | Add-LogMessage $LogPath
+    }
+    if($Config.Cleanup.PublicDesktopCleanup){
+        Remove-Item -Path $env:PUBLIC\Desktop -Filter "*.lnk" -Force
+        "Cleaned Public desktop" | Add-LogMessage $LogPath
+    }
     # Verifies if the source disk can be contacted.
     $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
     $OriginCheck = Test-Path $Origin
