@@ -55,6 +55,12 @@ if(!(Test-Path $Location)){
 	$Script | Out-File -FilePath $Location -Force
 }
 
+# Changes the computer's execution policy.
+if((Get-ExecutionPolicy) -notmatch "RemoteSigned|Bypass"){
+    "Changed device's ExecutionPolicy to 'RemoteSigned'" | Add-LogMessage $LogPath
+    Set-ExecutionPolicy RemoteSigned -Force
+}
+
 # Recovers the log file's contents.
 $LogFile = Get-Content -Path $LogPath
 
@@ -245,6 +251,7 @@ if($Config.Cleanup -and -not $CleanupCheck){
     $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
     $OriginCheck = Test-Path $Origin
     if(-not $OriginCheck){
+        "Source location not detected. Waiting for reconnect." | Add-LogMessage $LogPath
         while(-not $OriginCheck){
             # Stops the script untill the disc is reachable.
             Read-Host "Please connect the source disk before continuing: $Origin"
