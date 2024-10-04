@@ -241,11 +241,11 @@ $CleanupCheck = $LogFile | Where-Object{$_ -match "\[Cleanup End\]"}
 if($Config.Cleanup -and -not $CleanupCheck){
     "[Cleanup Start]" | Add-LogMessage $LogPath
     if($Config.Cleanup.DesktopCleanup){
-        Remove-Item -Path $Env:USERPROFILE\Desktop -Filter "*.lnk" -Force
+        Remove-Item -Path "$Env:USERPROFILE\Desktop\*.lnk" -Force
         "Cleaned user desktop" | Add-LogMessage $LogPath
     }
     if($Config.Cleanup.PublicDesktopCleanup){
-        Remove-Item -Path $env:PUBLIC\Desktop -Filter "*.lnk" -Force
+        Remove-Item -Path "$env:PUBLIC\Desktop\*.lnk" -Force
         "Cleaned Public desktop" | Add-LogMessage $LogPath
     }
     # Verifies if the source disk can be contacted.
