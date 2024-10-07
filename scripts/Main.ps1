@@ -48,11 +48,14 @@ if %errorLevel% == 0 (
 ) else (
 	REM Restarts the script as admin.
 	powershell -command `"Start-Process %~dpnx0 -Verb runas`"
+    goto End
 )
+:Continue
 powershell.exe -NoLogo -NoExit -NoProfile -ExecutionPolicy Bypass -File $PSCommandPath
+:End
 "
 if(!(Test-Path $Location)){
-	$Script | Out-File -FilePath $Location -Force
+	$Script | Out-File -FilePath $Location -Encoding utf8 -Force
 }
 
 # Changes the computer's execution policy.
@@ -223,14 +226,12 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
         # Source disk cannot be found. Stores the password change on
         # script op de current user's desktop.
         $ScriptPath = "$Env:USERPROFILE\Desktop\PswdChange.bat"
-        $Script = "
-        @echo off
+    $Script = "@echo off
         echo This script will change the curen't user's password.
         echo Make sure to recover the file prior to running this command.
         pause
-        NET USER $Password
-        " | Out-File -FilePath $ScriptPath
-        "Source disk could not be reached. Aborting password change." | Add-LogMessage $LogPath
+    NET USER $User $Password" 
+    $Script | Out-File -FilePath $ScriptPath -Encoding utf8 -Force
         "Password change script stored on desktop." | Add-LogMessage $LogPath
     }
     "[LocalAdminPassword End]" | Add-LogMessage $LogPath
