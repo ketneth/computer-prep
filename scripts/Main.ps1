@@ -229,6 +229,8 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
         "Source disk could not be reached." | Add-LogMessage $LogPath
         "Password file stored on the user's desktop." | Add-LogMessage $LogPath
     }
+    # Creates a script to change the current user's password
+    # and stores it on the desktop.
     $ScriptPath = "$Env:USERPROFILE\Desktop\PswdChange.bat"
     $Script = "@echo off
     echo This script will change the curen't user's password.
