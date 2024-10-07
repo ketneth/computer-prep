@@ -85,6 +85,10 @@
 	"LocalAdminPassword":true,
 	"Cleanup":{
 		"DesktopCleanup":true,
-		"PublicDesktopCleanup":true
+		"PublicDesktopCleanup":true,
+		"LogBackup":true,
+		"StartupScriptRemoval":true,
+		"EnableUA":true,
+		"ScriptFolderRemoval":true
 	}
 }
