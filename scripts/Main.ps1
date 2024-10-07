@@ -200,6 +200,7 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
     }
     # Prepares the ItGlue password import file.
     $Username = WHOAMI
+    $User = $Username.Split("\")[1]
     $Password = @{
         organization = ""
         name = $Username.Replace("\"," - ")
@@ -214,26 +215,28 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
     # Remove quotes from the CSV file.
     $Temp = Get-Content -Path $PswFile
     $Temp | ForEach-Object{$_.Replace('","',',').TrimStart('"').TrimEnd('"')} | Out-File -FilePath $PswFile
+    "Password documentation file created" | Add-LogMessage $LogPath
     # Verifies if the source disk is avilable.
     $Origin = ($LogFile | Where-Object{$_ -match "SourceLocation="}).Split('=')[1]
     if(Test-Path -Path $Origin){
-        # Copies the password folder to the source disk.
+        # Copies the password file to the source disk.
         Copy-Item -Path $PswFile -Destination $Origin
         "Password file copied to source directory" | Add-LogMessage $LogPath
-        & "NET USER $Password"
-        "Password changed" | Add-LogMessage $LogPath
     }else{
-        # Source disk cannot be found. Stores the password change on
-        # script op de current user's desktop.
-        $ScriptPath = "$Env:USERPROFILE\Desktop\PswdChange.bat"
+        # Source disk cannot be found stores the password
+        # documentation file on the desktop.
+        Copy-Item -Path $PswFile -Destination "$Env:USERPROFILE\Desktop"
+        "Source disk could not be reached." | Add-LogMessage $LogPath
+        "Password file stored on the user's desktop." | Add-LogMessage $LogPath
+    }
+    $ScriptPath = "$Env:USERPROFILE\Desktop\PswdChange.bat"
     $Script = "@echo off
-        echo This script will change the curen't user's password.
-        echo Make sure to recover the file prior to running this command.
-        pause
+    echo This script will change the curen't user's password.
+    echo Make sure to recover the file prior to running this command.
+    pause
     NET USER $User $Password" 
     $Script | Out-File -FilePath $ScriptPath -Encoding utf8 -Force
-        "Password change script stored on desktop." | Add-LogMessage $LogPath
-    }
+    "Password change script stored on desktop." | Add-LogMessage $LogPath
     "[LocalAdminPassword End]" | Add-LogMessage $LogPath
 }
 
