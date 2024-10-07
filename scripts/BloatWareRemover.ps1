@@ -72,4 +72,4 @@ if(!$Soft){
 	"[BloatwareRemover End]" | Add-LogMessage $LogFile
 }
 
-Restart-Computer
+Restart-Computer -Force

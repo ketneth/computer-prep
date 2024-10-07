@@ -62,7 +62,7 @@ if(!(Test-Path $Location)){
 if((Get-ExecutionPolicy) -notmatch "RemoteSigned|Bypass"){
     "Changed device's ExecutionPolicy to 'RemoteSigned'" | Add-LogMessage $LogPath
     Set-ExecutionPolicy RemoteSigned -Force
-    Restart-Computer
+    Restart-Computer -Force
 }
 
 # Recovers the log file's contents.
@@ -102,7 +102,7 @@ if($Config.ComputerRename.Run -and -not $ComputerRenameCheck){
                 {$_ -ne ''} {
                     Write-Host "Computer renamed: $_"
                     $Check = $false
-                    Rename-Computer -NewName $_ -Restart
+                    Rename-Computer -NewName $_ -Restart -Force
                 }
                 default {
                     Write-Host 'No name given.'

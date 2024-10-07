@@ -100,7 +100,7 @@ function Update-Computer {
                 if($InstallResult.ReboorRequired -contains 'True'){
                     $RebootRequired = $true
                     if($AutoReboot){
-                        Restart-Computer
+                        Restart-Computer -Force
                     }
                 }
             }else{
