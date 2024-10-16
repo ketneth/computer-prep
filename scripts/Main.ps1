@@ -105,15 +105,19 @@ if($Config.ComputerRename.Run -and -not $ComputerRenameCheck){
             switch(Read-Host -Prompt "Please enter the new computer name. (Leave blank to skip)"){
                 {$_ -eq $ComputerName} {
                     Write-Host "This is already the given name of the device. Continuing with the script."
+                    "[Renamed Skipped]" | Add-LogMessage $LogPath
                     $Check = $false
                 }
                 {$_ -ne ''} {
                     Write-Host "Computer renamed: $_"
+                    "[Computer Renamed]" | Add-LogMessage $LogPath
+                    "Computer New Name: $NewName" | Add-LogMessage $LogPath
                     $Check = $false
                     Rename-Computer -NewName $_ -Restart -Force
                 }
                 default {
                     Write-Host 'No name given.'
+                    "[Renamed Skipped]" | Add-LogMessage $LogPath
                     $Check = $false
                 }
             }
