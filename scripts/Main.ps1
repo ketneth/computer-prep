@@ -81,6 +81,13 @@ if($Config.BloatwareRemoval -and -not $BloatwareRemovalEnd){
     & $PSScriptRoot\BloatwareRemover.ps1 -LogFile $LogPath
 }
 
+<# App Install #>
+$Installers = Get-ChildItem -Path $ParentFolder\apps\*.* -Exclude "Setup.csv"
+$InstallCheck = $LogFile | Where-Object{$_ -match "\[AppSetup End\]"}
+if($Installers -and -not $InstallCheck){
+    & $PSScriptRoot\AppSetup.ps1 -LogFile $LogPath
+}
+
 <# Computer Rename #>
 $ComputerRenameCheck = $LogFile | Where-Object{$_ -match "\[Rename Skipped\]|\[Computer Renamed\]"}
 if($Config.ComputerRename.Run -and -not $ComputerRenameCheck){
