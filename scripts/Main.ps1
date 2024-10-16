@@ -60,9 +60,9 @@ if(!(Test-Path $Location)){
 }
 
 # Changes the computer's execution policy.
-if((Get-ExecutionPolicy) -notmatch "RemoteSigned|Bypass"){
+if((Get-ExecutionPolicy -Scope LocalMachine) -notmatch "RemoteSigned"){
     "Changed device's ExecutionPolicy to 'RemoteSigned'" | Add-LogMessage $LogPath
-    Set-ExecutionPolicy RemoteSigned -Force
+    Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope LocalMachine -Force
     Restart-Computer -Force
 }
 
