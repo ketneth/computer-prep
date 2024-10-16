@@ -56,6 +56,7 @@ powershell.exe -NoLogo -NoExit -NoProfile -ExecutionPolicy Bypass -File $PSComma
 "
 if(!(Test-Path $Location)){
 	$Script | Out-File -FilePath $Location -Encoding utf8 -Force
+    Restart-Computer -Force
 }
 
 # Changes the computer's execution policy.
