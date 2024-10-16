@@ -236,7 +236,7 @@ if($Config.LocalAdminPassword -and -not $LocalAdminPasswordCheck){
     echo This script will change the curen't user's password.
     echo Make sure to recover the file prior to running this command.
     pause
-    NET USER $User $Password" 
+    NET USER $User $NewPassword" 
     $Script | Out-File -FilePath $ScriptPath -Encoding utf8 -Force
     "Password change script stored on desktop." | Add-LogMessage $LogPath
     "[LocalAdminPassword End]" | Add-LogMessage $LogPath
