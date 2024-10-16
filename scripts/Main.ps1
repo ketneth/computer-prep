@@ -55,7 +55,7 @@ powershell.exe -NoLogo -NoExit -NoProfile -ExecutionPolicy Bypass -File $PSComma
 :End
 "
 if(!(Test-Path $Location)){
-	$Script | Out-File -FilePath $Location -Encoding utf8 -Force
+	$Script | Out-File -FilePath $Location -Encoding ascii -Force
     Restart-Computer -Force
 }
 
