@@ -1,0 +1,94 @@
+{
+	"WindowsUpdate":true,
+	"BloatwareRemoval":true,
+	"ComputerRename": {
+		"Run":true,
+		"NewName": ""
+	},
+	"UserSettings": {
+		"Registry":[
+			{
+				"DisplayName":"RemoveTaskView",
+				"Description":"Removes the Task view button from the task bar.",
+				"Enabled":true,
+				"Path":"HKLM:\\Default\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+				"Name":"ShowTaskViewButton",
+				"Value":0,
+				"PropertyType":"Dword"
+			},
+			{
+				"DisplayName":"RemoveWidgets",
+				"Description":"Removes the News and Interests button from the task bar.",
+				"Enabled":true,
+				"Path":"HKLM:\\Default\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+				"Name":"TaskbarDa",
+				"Value":0,
+				"PropertyType":"Dword"
+			},
+			{
+				"DisplayName":"RemoveChat",
+				"Description":"Removes the Task view button from the task bar.",
+				"Enabled":true,
+				"Path":"HKLM:\\Default\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+				"Name":"TaskbarMn",
+				"Value":0,
+				"PropertyType":"Dword"
+			},
+			{
+				"DisplayName":"MoveStartLeft",
+				"Description":"Moves the Start Menu to the left side.",
+				"Enabled":true,
+				"Path":"HKLM:\\Default\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+				"Name":"TaskbarAl",
+				"Value":0,
+				"PropertyType":"Dword"
+			},
+			{
+				"DisplayName":"RemoveSearch",
+				"Description":"Removes the Search field from the task bar.",
+				"Enabled":true,
+				"Path":"HKLM:\\Default\\Software\\Microsoft\\Windows\\CurrentVersion\\Search",
+				"Name":"SearchboxTaskbarMode",
+				"Value":0,
+				"PropertyType":"Dword"
+			},
+			{
+				"DisplayName":"RemoStartRecommendations",
+				"Description":"Removes the Recommendations section from the Start Menu.",
+				"Enabled":true,
+				"Path":"HKLM:\\Default\\Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced",
+				"Name":"Start_Layout",
+				"Value":1,
+				"PropertyType":"Dword"
+			},
+			{
+				"DisplayName":"NumlockAtBoot",
+				"Description":"Enables Numlock at the start of the computer.",
+				"Enabled":true,
+				"Path":"HKU:\\.DEFAULT\\Control Panel\\Keyboard",
+				"Name":"InitialKeyboardIndicators",
+				"Value":2147483650,
+				"PropertyType":"REG_SZ"
+			},
+			{
+				"DisplayName":"Edge First Setup",
+				"Description":"Disables the first setup experience when opening Edge.",
+				"Enabled":true,
+				"Path":"HKLM:\\SOFTWARE\\Microsoft\\Edge",
+				"Name":"HideFirstRunExperience",
+				"Value":1,
+				"PropertyType":"Dword"
+			}
+		],
+		"RunForExistingUsers":true
+	},
+	"LocalAdminPassword":true,
+	"Cleanup":{
+		"DesktopCleanup":true,
+		"PublicDesktopCleanup":true,
+		"LogBackup":true,
+		"StartupScriptRemoval":true,
+		"EnableUA":true,
+		"ScriptFolderRemoval":true
+	}
+}

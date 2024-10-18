@@ -1,0 +1,5 @@
+.gitignore
+logs\
+*.md
+CopyExclusions.txt
+Start.bat

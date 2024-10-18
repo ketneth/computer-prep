@@ -1,16 +1,37 @@
 #Requires -RunAsAdministrator
 
 param(
-    [Switch]$Auto
+    [Switch]$Auto,
+    [Parameter(Mandatory)][String]$LogFile
 )
+
+function Add-LogMessage{
+	param(
+		[Parameter(MandaTory, Position=0)][String]$LogFile,
+		[Parameter(Mandatory, ValueFromPipeline)][String]$Message
+	)
+	$Date = Get-Date -Format HH:MM:ss
+	"$Date`t$Message" | Out-File $LogFile -Append -Encoding ascii
+    Write-Verbose $Message
+
+	<#
+        .SYNOPSIS
+        Add Message to LogFile.
+
+        .DESCRIPTION
+        Adds timestamp and Message to LogFile.
+    #>
+}
+
+"[WindowsUpdate Start]" | Add-LogMessage $LogFile
 
 function Set-Environment {
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
-        if(!(Get-PackageProvider -Name NuGet)){
+        if(!(Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction SilentlyContinue)){
             Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
         }
-        if(!(Get-Module -Name PSWindowsUpdate -ListAvailable)){
+        if(!(Get-Module -Name PSWindowsUpdate -ListAvailable -ErrorAction SilentlyContinue)){
             Install-Module -Name PSWindowsUpdate -Force -ErrorAction Stop
         }
         if((Get-ExecutionPolicy) -eq 'Restricted'){
@@ -79,15 +100,11 @@ function Update-Computer {
                 if($InstallResult.ReboorRequired -contains 'True'){
                     $RebootRequired = $true
                     if($AutoReboot){
-                        Restart-Computer
+                        Restart-Computer -Force
                     }
                 }
             }else{
                 $Continue = $false
-                if($AutoReboot){
-                    $RegKey = "HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce\"
-                    New-ItemProperty -Path $RegKey -Name "!WindowsUpdate" -Value 'cmd /c del "%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup\Restart.bat"'
-                }
             }
             $InstalledUpdates += ($InstallResult | Where-Object{$_.Result -ne 'Failed'}).Title
             if($InstallResult.Result -contains 'Failed'){
@@ -124,19 +141,6 @@ function Update-Computer {
 }
 
 if($Auto){
-    $Path = "$Env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup\Restart.bat"
-    $LinkTest = Test-Path $Path
-    if(!$LinkTest){
-        $Command = "net session >nul 2>&1
-        if %errorLevel% == 0 (
-            goto Continue
-        ) else (
-            REM Restarts the script as admin.
-            powershell -command `"Start-Process %~dpnx0 -Verb runas`"
-        )
-        C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -NoLogo -NoExit -NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`" -Auto"
-        Set-Content -Path $Path -Value $Command
-    }
     Update-Computer -AutoReboot
 }Else{
     Update-Computer
@@ -158,3 +162,5 @@ if($Auto){
     .INPUTS
     None. You can't pipe objects to WindowsUpdate.ps1.
 #>
+
+"[WindowsUpdate End]" | Add-LogMessage $LogFile
