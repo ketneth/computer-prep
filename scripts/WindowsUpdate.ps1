@@ -32,12 +32,15 @@ function Set-Environment {
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
         if(!(Get-PackageProvider -Name NuGet -ListAvailable -ErrorAction SilentlyContinue)){
+            "Package provider missing.", "Installing package: NuGet" | Add-LogMessage $logPath
             Install-PackageProvider -Name NuGet -Force -ErrorAction Stop
         }
         if(!(Get-Module -Name PSWindowsUpdate -ListAvailable -ErrorAction SilentlyContinue)){
+            "PowerShell module missing.", "Installing module: PSWindowsUpdate" | Add-LogMessage $logPath
             Install-Module -Name PSWindowsUpdate -Force -ErrorAction Stop
         }
         if((Get-ExecutionPolicy) -eq 'Restricted'){
+            "Current PowerShell execution policy is: Restricted", "Changing execution policy to: RemoteSigned" | Add-LogMessage $logPath
             Set-ExecutionPolicy RemoteSigned -Force -ErrorAction Stop
         }
     }
@@ -56,7 +59,7 @@ function Set-Environment {
         None. You can't pipe objects to Set-Environment.
 
         .OUTPUTS
-        A boolean, depending if the invironment could be modified and/or meets the requirements.
+        A boolean, depending if the environment could be modified and/or meets the requirements.
 
         .LINK
         Get-PackageProvider
@@ -80,7 +83,7 @@ function Set-Environment {
 
 function Update-Computer {
     param(
-        [Switch]$AutoReboot
+        [String]$logPath
     )
     if(Set-Environment -logPath $logPath){
         "==Windows Update Start==" | Add-LogMessage $logPath
@@ -88,10 +91,10 @@ function Update-Computer {
         $Tries = 1
         $InstalledUpdates = @()
         while($Continue -and $Tries -lt 4){
-            Write-Host 'Checking updates.'
-            Get-WindowsUpdate -IgnoreReboot -OutVariable AvailableUpdates | Out-Host
+            'Checking updates.' | Add-LogMessage $logPath
+            Get-WindowsUpdate -IgnoreReboot -OutVariable AvailableUpdates | Out-File $logPath -Append
             if(!$AvailableUpdates){
-                Write-Host 'No updates found.'
+                'No updates found.' | Add-LogMessage $logPath
                 break
             }
             $UpdateTest = Compare-Object -ReferenceObject $InstalledUpdates -DifferenceObject $AvailableUpdates.Title -IncludeEqual
