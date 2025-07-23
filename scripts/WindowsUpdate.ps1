@@ -26,8 +26,6 @@ function Add-LogMessage{
     #>
 }
 
-"[WindowsUpdate Start]" | Add-LogMessage $LogFile
-
 function Set-Environment {
     try {
         [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
@@ -82,9 +80,8 @@ function Update-Computer {
     param(
         [Switch]$AutoReboot
     )
-    if(!(Set-Environment)){
-        throw 'Failed to configure environment.'
-    }else{
+    if(Set-Environment -logPath $logPath){
+        "==Windows Update Start==" | Add-LogMessage $logPath
         $Continue = $true
         $Tries = 1
         $InstalledUpdates = @()
@@ -119,10 +116,7 @@ function Update-Computer {
         }
         Write-Host 'SuccessFully installed updates.'
     }
-    If($RebootRequired){
-        Write-Host 'You need to restart this computer in order to finalize the installation.' -ForegroundColor Yellow
-    }
-
+    "==Windows Update End==" | Add-LogMessage $logPath
         <#
         .SYNOPSIS
         Installs Windows updates.
@@ -165,5 +159,3 @@ if($Auto){
     .INPUTS
     None. You can't pipe objects to WindowsUpdate.ps1.
 #>
-
-"[WindowsUpdate End]" | Add-LogMessage $LogFile

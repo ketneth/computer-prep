@@ -33,7 +33,7 @@ $InstallInstructions = "C:\Temp\prep\apps\Setup.csv"
 
 if($ApplicationInstall){
     # Documents the application install start time.
-    "[AppSetup Start]" | Add-LogMessage $LogFile
+    "==AppSetup Start==" | Add-LogMessage $LogFile
     
     # Gets the log file contents.
     $Logs = Get-Content -Path $LogFile
@@ -63,5 +63,5 @@ if($ApplicationInstall){
     }
 
     # Documents the application install end time.
-    "[AppSetup End]" | Add-LogMessage $LogFile
+    "==AppSetup End==" | Add-LogMessage $LogFile
 }

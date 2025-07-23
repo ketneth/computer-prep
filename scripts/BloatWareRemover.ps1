@@ -34,7 +34,7 @@ $Manufacturer = (Get-ComputerInfo -Property CsManufacturer).CsManufacturer
 # Stops the script is the device manufacturer is not HP.
 if($Manufacturer -notmatch "HP"){
 	"ERROR`tUnsupported Manufacturer: $Manufacturer" | Add-LogMessage $LogFile
-	"[BloatwareRemover End]" | Add-LogMessage $LogFile
+	"==BloatwareRemover End==" | Add-LogMessage $LogFile
 	return
 }
 
@@ -72,7 +72,7 @@ While($RetryCount -lt 3 -or $Retries){
 }
 
 if(!$Soft){
-	"[BloatwareRemover End]" | Add-LogMessage $LogFile
+	"==BloatwareRemover End==" | Add-LogMessage $LogFile
 }
 
 Restart-Computer -Force
