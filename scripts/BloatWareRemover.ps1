@@ -26,7 +26,7 @@ function Add-LogMessage{
 }
 
 # Documents the bloatware removal start time.
-"[BloatwareRemover Start]" | Add-LogMessage $LogFile
+"==BloatwareRemover Start==" | Add-LogMessage $LogFile
 
 # Recovering the device manufacturer.
 $Manufacturer = (Get-ComputerInfo -Property CsManufacturer).CsManufacturer
