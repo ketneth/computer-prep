@@ -2,12 +2,15 @@
 
 function Add-LogMessage{
 	param(
-		[Parameter(MandaTory, Position=0)][String]$LogFile,
+		[Parameter(MandaTory, Position=0)][String]$logFile,
 		[Parameter(Mandatory, ValueFromPipeline)][String]$Message
 	)
+
+    process{
 	$Date = Get-Date -Format HH:MM:ss
-	"$Date`t$Message" | Out-File $LogFile -Append -Encoding ascii
+        "$Date`t$Message" | Out-File $logFile -Append -Encoding ascii
     Write-Verbose $Message
+    }
 
 	<#
         .SYNOPSIS
