@@ -11,7 +11,7 @@ function Add-LogMessage{
 	)
 
     process{
-	$Date = Get-Date -Format HH:MM:ss
+        $Date = Get-Date -Format HH:MM:ss
         "$Date`t$message" | Out-File $logFile -Append -Encoding ascii
         Write-Verbose $message
     }
