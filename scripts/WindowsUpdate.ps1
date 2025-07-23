@@ -11,7 +11,7 @@ function Add-LogMessage{
 	)
 
     process{
-	$Date = Get-Date -Format HH:MM:ss
+        $Date = Get-Date -Format HH:MM:ss
         "$Date`t$message" | Out-File $logFile -Append -Encoding ascii
         Write-Verbose $message
     }
@@ -102,7 +102,7 @@ function Update-Computer {
                 'Installing updates.' | Add-LogMessage $logPath
                 Install-WindowsUpdate -AcceptAll -IgnoreReboot -OutVariable InstallResult | Out-File $logPath -Append
                 if($InstallResult.RebootRequired -contains 'True'){
-                        Restart-Computer -Force
+                    Restart-Computer -Force
                 }
             }else{
                 $Continue = $false
@@ -119,7 +119,7 @@ function Update-Computer {
         "ERROR`tFailed to configure environment." | Add-LogMessage $logPath
     }
     "==Windows Update End==" | Add-LogMessage $logPath
-        <#
+    <#
         .SYNOPSIS
         Installs Windows updates.
 
